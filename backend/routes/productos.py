@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from schemas.producto_schema import Producto
-from database import productos_collection
+
+from backend.schemas.producto_schema import Producto
+from backend.database import productos_collection
 
 router = APIRouter(
     prefix="/productos",

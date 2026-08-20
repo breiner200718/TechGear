@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from database import client, db
 
-from routes.productos import router as productos_router
-from routes.pedidos import router as pedidos_router
+from backend.database import client, db
+from backend.routes.productos import router as productos_router
+from backend.routes.pedidos import router as pedidos_router
 
 app = FastAPI(
     title="TechGear API",
@@ -25,12 +25,10 @@ def inicio():
 def probar_database():
     try:
         client.admin.command("ping")
-
         return {
             "mensaje": "Conexión con MongoDB Atlas exitosa",
             "base_de_datos": db.name
         }
-
     except Exception as e:
         return {
             "mensaje": "Error de conexión con MongoDB Atlas",

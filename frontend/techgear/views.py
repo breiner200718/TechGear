@@ -1,3 +1,19 @@
+import httpx
 from django.shortcuts import render
 
-# Create your views here.
+
+def productos(request):
+    respuesta = httpx.get("http://127.0.0.1:8000/productos/")
+
+    productos = []
+
+    if respuesta.status_code == 200:
+        productos = respuesta.json()
+
+    return render(
+        request,
+        "techgear/productos.html",
+        {
+            "productos": productos
+        }
+    )
