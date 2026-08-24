@@ -1,9 +1,9 @@
-import httpx
+import requests
 from django.shortcuts import render
 
 
 def productos(request):
-    respuesta = httpx.get("http://127.0.0.1:8000/productos/")
+    respuesta = requests.get("http://127.0.0.1:8000/productos/")
 
     productos = []
 
@@ -18,8 +18,9 @@ def productos(request):
         }
     )
 
+
 def pedidos(request):
-    respuesta = httpx.get("http://127.0.0.1:8000/pedidos/")
+    respuesta = requests.get("http://127.0.0.1:8000/pedidos/")
 
     pedidos = []
 
