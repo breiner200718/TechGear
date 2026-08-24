@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>TechGear - Pedidos</title>
+</head>
+<body>
+
+    <h1>Pedidos TechGear</h1>
+
+    {% if pedidos %}
+        {% for pedido in pedidos %}
+            <div>
+                <p>ID: {{ pedido.id }}</p>
+                <p>Cliente: {{ pedido.cliente }}</p>
+                <p>Producto: {{ pedido.producto_id }}</p>
+                <p>Cantidad: {{ pedido.cantidad }}</p>
+                <p>Total: ${{ pedido.total }}</p>
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p>No hay pedidos disponibles.</p>
+    {% endif %}
+
+</body>
+</html>

@@ -17,3 +17,19 @@ def productos(request):
             "productos": productos
         }
     )
+
+def pedidos(request):
+    respuesta = httpx.get("http://127.0.0.1:8000/pedidos/")
+
+    pedidos = []
+
+    if respuesta.status_code == 200:
+        pedidos = respuesta.json()
+
+    return render(
+        request,
+        "techgear/pedidos.html",
+        {
+            "pedidos": pedidos
+        }
+    )

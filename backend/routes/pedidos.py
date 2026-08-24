@@ -1,8 +1,6 @@
 from fastapi import APIRouter, HTTPException
-
-from backend.schemas.pedido_schema import Pedido
-from backend.database import pedidos_collection
-
+from schemas.pedido_schema import Pedido
+from database import pedidos_collection
 from bson import ObjectId
 
 router = APIRouter(
