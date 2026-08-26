@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Checkout - TechGear</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        header {
+            background: #0f172a;
+            padding: 20px;
+            color: white;
+        }
+
+        header h1 {
+            text-align: center;
+        }
+
+        .contenedor {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .checkout {
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .checkout h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .descripcion {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        .seccion {
+            margin-bottom: 30px;
+        }
+
+        .seccion h3 {
+            margin-bottom: 18px;
+            color: #0f172a;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .campo {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+            color: #334155;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0284c7;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+        }
+
+        .fila {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #0f172a;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #0284c7;
+        }
+
+        .mensaje {
+            background: #dcfce7;
+            color: #166534;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .contenedor {
+                margin: 20px auto;
+                padding: 10px;
+            }
+
+            .checkout {
+                padding: 25px 20px;
+            }
+
+            .fila {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>TechGear</h1>
+    </header>
+
+    <div class="contenedor">
+
+        <div class="checkout">
+
+            <h2>Finalizar pedido</h2>
+
+            <p class="descripcion">
+                Completa tus datos y la información de tu pedido.
+            </p>
+
+            {% if mensaje %}
+                <div class="mensaje">
+                    {{ mensaje }}
+                </div>
+            {% endif %}
+
+            {% if error %}
+                <div class="error">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <!-- DATOS DEL CLIENTE -->
+                <div class="seccion">
+
+                    <h3>Datos del cliente</h3>
+
+                    <div class="campo">
+                        <label for="nombre">
+                            Nombre completo
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="nombre"
+                            placeholder="Ej: Juan Pérez"
+                            minlength="2"
+                            maxlength="100"
+                            required
+                        >
+                    </div>
+
+                    <div class="fila">
+
+                        <div class="campo">
+                            <label for="telefono">
+                                Teléfono
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="telefono"
+                                name="telefono"
+                                placeholder="3001234567"
+                                minlength="7"
+                                maxlength="20"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label for="ciudad">
+                                Ciudad
+                            </label>
+
+                            <input
+                                type="text"
+                                id="ciudad"
+                                name="ciudad"
+                                placeholder="Ej: Bogotá"
+                                minlength="2"
+                                maxlength="100"
+                                required
+                            >
+                        </div>
+
+                    </div>
+
+                    <div class="campo">
+                        <label for="direccion">
+                            Dirección
+                        </label>
+
+                        <input
+                            type="text"
+                            id="direccion"
+                            name="direccion"
+                            placeholder="Ej: Calle 10 #20-30"
+                            minlength="5"
+                            maxlength="200"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+
+                <!-- INFORMACIÓN DEL PEDIDO -->
+                <div class="seccion">
+
+                    <h3>Información del pedido</h3>
+
+                    <div class="campo">
+
+                        <label for="producto_id">
+                            ID del producto
+                        </label>
+
+                        <input
+                            type="text"
+                            id="producto_id"
+                            name="producto_id"
+                            placeholder="ID del producto"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="fila">
+
+                        <div class="campo">
+
+                            <label for="cantidad">
+                                Cantidad
+                            </label>
+
+                            <input
+                                type="number"
+                                id="cantidad"
+                                name="cantidad"
+                                min="1"
+                                value="1"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="campo">
+
+                            <label for="total">
+                                Total
+                            </label>
+
+                            <input
+                                type="number"
+                                id="total"
+                                name="total"
+                                min="0.01"
+                                step="0.01"
+                                placeholder="150000"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BOTÓN -->
+                <button type="submit">
+                    Confirmar pedido
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
