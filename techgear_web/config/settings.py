@@ -34,6 +34,7 @@ VERCEL_URL = os.getenv("VERCEL_URL")
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
+    "tech-gear-web.vercel.app",
 ]
 
 if VERCEL_URL:
@@ -44,7 +45,9 @@ if VERCEL_URL:
 # CSRF
 # ---------------------------------------------------------
 
-CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS = [
+    "https://tech-gear-web.vercel.app",
+]
 
 if VERCEL_URL:
     CSRF_TRUSTED_ORIGINS.append(
