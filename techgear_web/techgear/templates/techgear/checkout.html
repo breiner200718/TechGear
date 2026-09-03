@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Checkout - TechGear</title>
 
     <style>
@@ -22,8 +21,8 @@
 
         header {
             background: #0f172a;
-            padding: 20px;
             color: white;
+            padding: 20px;
         }
 
         header h1 {
@@ -43,7 +42,12 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
         }
 
-        .checkout h2 {
+        h2 {
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+
+        .titulo {
             text-align: center;
             margin-bottom: 10px;
         }
@@ -59,10 +63,10 @@
         }
 
         .seccion h3 {
-            margin-bottom: 18px;
             color: #0f172a;
             border-bottom: 2px solid #e2e8f0;
             padding-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         .campo {
@@ -96,6 +100,32 @@
             gap: 15px;
         }
 
+        .producto {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .producto h4 {
+            font-size: 21px;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+
+        .producto p {
+            color: #64748b;
+            margin-bottom: 7px;
+        }
+
+        .precio {
+            color: #0f766e !important;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
         button {
             width: 100%;
             padding: 14px;
@@ -113,13 +143,62 @@
             background: #0284c7;
         }
 
-        .mensaje {
-            background: #dcfce7;
-            color: #166534;
-            padding: 15px;
+        .botones {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .boton {
+            flex: 1;
+            padding: 13px;
             border-radius: 8px;
-            margin-bottom: 20px;
             text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            color: white;
+            transition: 0.2s;
+        }
+
+        .boton:hover {
+            transform: translateY(-2px);
+        }
+
+        .productos {
+            background: #0f766e;
+        }
+
+        .productos:hover {
+            background: #115e59;
+        }
+
+        .pedidos {
+            background: #374151;
+        }
+
+        .pedidos:hover {
+            background: #1f2937;
+        }
+
+        .confirmacion {
+            text-align: center;
+            padding: 30px 10px;
+        }
+
+        .icono {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .confirmacion h2 {
+            color: #166534;
+            margin-bottom: 10px;
+        }
+
+        .confirmacion p {
+            color: #64748b;
+            font-size: 17px;
+            margin-bottom: 30px;
         }
 
         .error {
@@ -132,6 +211,7 @@
         }
 
         @media (max-width: 600px) {
+
             .contenedor {
                 margin: 20px auto;
                 padding: 10px;
@@ -145,9 +225,28 @@
                 grid-template-columns: 1fr;
                 gap: 0;
             }
+
+            .botones {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
+<script>
+    const precioProducto = parseFloat("{{ producto.precio }}");
+
+    function calcularTotal() {
+        const cantidad = parseInt(
+            document.getElementById("cantidad").value
+        ) || 1;
+
+        const total = precioProducto * cantidad;
+
+        document.getElementById("total").value = total.toFixed(2);
+    }
+
+    calcularTotal();
+</script>
 
 <body>
 
@@ -159,173 +258,280 @@
 
         <div class="checkout">
 
-            <h2>Finalizar pedido</h2>
+            {% if confirmado %}
 
-            <p class="descripcion">
-                Completa tus datos y la información de tu pedido.
-            </p>
+                <!-- PEDIDO CONFIRMADO -->
 
-            {% if mensaje %}
-                <div class="mensaje">
-                    {{ mensaje }}
-                </div>
-            {% endif %}
+                <div class="confirmacion">
 
-            {% if error %}
-                <div class="error">
-                    {{ error }}
-                </div>
-            {% endif %}
-
-            <form method="POST">
-
-                {% csrf_token %}
-
-                <!-- DATOS DEL CLIENTE -->
-                <div class="seccion">
-
-                    <h3>Datos del cliente</h3>
-
-                    <div class="campo">
-                        <label for="nombre">
-                            Nombre completo
-                        </label>
-
-                        <input
-                            type="text"
-                            id="nombre"
-                            name="nombre"
-                            placeholder="Ej: Juan Pérez"
-                            minlength="2"
-                            maxlength="100"
-                            required
-                        >
+                    <div class="icono">
+                        ✅
                     </div>
 
-                    <div class="fila">
+                    <h2>
+                        ¡Pedido confirmado!
+                    </h2>
+
+                    <p>
+                        Tu pedido fue creado correctamente.
+                    </p>
+
+                    <div class="botones">
+
+                        <a
+                            href="{% url 'pedidos' %}"
+                            class="boton pedidos"
+                        >
+                            Ver mis pedidos
+                        </a>
+
+                        <a
+                            href="{% url 'productos' %}"
+                            class="boton productos"
+                        >
+                            Volver a productos
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+            {% elif producto %}
+
+                <!-- CHECKOUT -->
+
+                <h2 class="titulo">
+                    Finalizar pedido
+                </h2>
+
+                <p class="descripcion">
+                    Completa tus datos para realizar tu pedido.
+                </p>
+
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+
+                    <!-- DATOS DEL CLIENTE -->
+
+                    <div class="seccion">
+
+                        <h3>
+                            Datos del cliente
+                        </h3>
 
                         <div class="campo">
-                            <label for="telefono">
-                                Teléfono
-                            </label>
 
-                            <input
-                                type="tel"
-                                id="telefono"
-                                name="telefono"
-                                placeholder="3001234567"
-                                minlength="7"
-                                maxlength="20"
-                                required
-                            >
-                        </div>
-
-                        <div class="campo">
-                            <label for="ciudad">
-                                Ciudad
+                            <label for="nombre">
+                                Nombre completo
                             </label>
 
                             <input
                                 type="text"
-                                id="ciudad"
-                                name="ciudad"
-                                placeholder="Ej: Bogotá"
-                                minlength="2"
-                                maxlength="100"
+                                id="nombre"
+                                name="nombre"
+                                placeholder="Ej: Juan Pérez"
                                 required
                             >
+
+                        </div>
+
+
+                        <div class="fila">
+
+                            <div class="campo">
+
+                                <label for="telefono">
+                                    Teléfono
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    id="telefono"
+                                    name="telefono"
+                                    placeholder="3001234567"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="campo">
+
+                                <label for="ciudad">
+                                    Ciudad
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="ciudad"
+                                    name="ciudad"
+                                    placeholder="Ej: Medellín"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="campo">
+
+                            <label for="direccion">
+                                Dirección
+                            </label>
+
+                            <input
+                                type="text"
+                                id="direccion"
+                                name="direccion"
+                                placeholder="Ej: Calle 10 #20-30"
+                                required
+                            >
+
                         </div>
 
                     </div>
 
-                    <div class="campo">
-                        <label for="direccion">
-                            Dirección
-                        </label>
+
+                    <!-- PRODUCTO -->
+
+                    <div class="seccion">
+
+                        <h3>
+                            Producto seleccionado
+                        </h3>
+
+                        <div class="producto">
+
+                            <h4>
+                                {{ producto.nombre }}
+                            </h4>
+
+                            <p>
+                                {{ producto.descripcion }}
+                            </p>
+
+                            <p>
+                                Categoría: {{ producto.categoria }}
+                            </p>
+
+                            <p class="precio">
+                                ${{ producto.precio }}
+                            </p>
+
+                            <p>
+                                Stock disponible: {{ producto.stock }}
+                            </p>
+
+                        </div>
+
+
+                        <!-- ID DEL PRODUCTO -->
 
                         <input
-                            type="text"
-                            id="direccion"
-                            name="direccion"
-                            placeholder="Ej: Calle 10 #20-30"
-                            minlength="5"
-                            maxlength="200"
-                            required
-                        >
-                    </div>
-
-                </div>
-
-
-                <!-- INFORMACIÓN DEL PEDIDO -->
-                <div class="seccion">
-
-                    <h3>Información del pedido</h3>
-
-                    <div class="campo">
-
-                        <label for="producto_id">
-                            ID del producto
-                        </label>
-
-                        <input
-                            type="text"
-                            id="producto_id"
+                            type="hidden"
                             name="producto_id"
-                            placeholder="ID del producto"
-                            required
+                            value="{{ producto.id }}"
                         >
 
-                    </div>
 
-                    <div class="fila">
+                        <div class="fila">
 
-                        <div class="campo">
+                            <div class="campo">
 
-                            <label for="cantidad">
-                                Cantidad
-                            </label>
+                                <label for="cantidad">
+                                    Cantidad
+                                </label>
 
-                            <input
-                                type="number"
-                                id="cantidad"
-                                name="cantidad"
-                                min="1"
-                                value="1"
-                                required
-                            >
+                                <input
+                                    type="number"
+                                    id="cantidad"
+                                    name="cantidad"
+                                    min="1"
+                                    max="{{ producto.stock }}"
+                                    value="1"
+                                    required
+                                    oninput="calcularTotal()"
+                                >
+
+                            </div>
+
+
+                            <div class="campo">
+
+                                <label for="total">
+                                    Total
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="total"
+                                    name="total"
+                                    value="{{ producto.precio }}"
+                                    step="0.01"
+                                    readonly
+                                    required
+                                >
+
+                            </div>
 
                         </div>
 
-                        <div class="campo">
-
-                            <label for="total">
-                                Total
-                            </label>
-
-                            <input
-                                type="number"
-                                id="total"
-                                name="total"
-                                min="0.01"
-                                step="0.01"
-                                placeholder="150000"
-                                required
-                            >
-
-                        </div>
-
                     </div>
+
+
+                    <!-- CONFIRMAR -->
+
+                    <button type="submit">
+                        Confirmar pedido
+                    </button>
+
+                </form>
+
+
+                <!-- NAVEGACIÓN -->
+
+                <div class="botones">
+
+                    <a
+                        href="{% url 'productos' %}"
+                        class="boton productos"
+                    >
+                        ← Volver a productos
+                    </a>
+
+                    <a
+                        href="{% url 'pedidos' %}"
+                        class="boton pedidos"
+                    >
+                        Ver pedidos
+                    </a>
 
                 </div>
 
 
-                <!-- BOTÓN -->
-                <button type="submit">
-                    Confirmar pedido
-                </button>
+            {% else %}
 
-            </form>
+                <div class="error">
+                    No se encontró el producto seleccionado.
+                </div>
+
+                <div class="botones">
+
+                    <a
+                        href="{% url 'productos' %}"
+                        class="boton productos"
+                    >
+                        ← Volver a productos
+                    </a>
+
+                </div>
+
+            {% endif %}
 
         </div>
 

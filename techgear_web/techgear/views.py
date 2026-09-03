@@ -1,4 +1,5 @@
 import requests
+
 from django.shortcuts import render
 
 
@@ -6,6 +7,7 @@ API_URL = "https://techgear-api-qqz2.onrender.com"
 
 
 def productos(request):
+
     try:
         respuesta = requests.get(
             f"{API_URL}/productos/",
@@ -13,7 +15,13 @@ def productos(request):
         )
 
         if respuesta.status_code == 200:
+
             productos = respuesta.json()
+
+            # Convertir el _id de MongoDB a id
+            # para utilizarlo fácilmente en las plantillas
+            for producto in productos:
+                producto["id"] = producto["_id"]
 
             return render(
                 request,
@@ -41,6 +49,7 @@ def productos(request):
         )
 
     except requests.exceptions.ConnectionError:
+
         return render(
             request,
             "techgear/productos.html",
@@ -51,6 +60,7 @@ def productos(request):
         )
 
     except requests.exceptions.Timeout:
+
         return render(
             request,
             "techgear/productos.html",
@@ -61,6 +71,7 @@ def productos(request):
         )
 
     except requests.exceptions.RequestException:
+
         return render(
             request,
             "techgear/productos.html",
@@ -71,7 +82,100 @@ def productos(request):
         )
 
 
+def crear_producto(request):
+
+    if request.method == "POST":
+
+        try:
+            datos = {
+                "nombre": request.POST.get("nombre"),
+                "descripcion": request.POST.get("descripcion"),
+                "precio": float(request.POST.get("precio")),
+                "stock": int(request.POST.get("stock")),
+                "categoria": request.POST.get("categoria")
+            }
+
+        except (ValueError, TypeError):
+
+            return render(
+                request,
+                "techgear/crear_producto.html",
+                {
+                    "error": "El precio o el stock no tienen un formato válido."
+                }
+            )
+
+        try:
+            respuesta = requests.post(
+                f"{API_URL}/productos/",
+                json=datos,
+                timeout=5
+            )
+
+            if respuesta.status_code in (200, 201):
+
+                return render(
+                    request,
+                    "techgear/crear_producto.html",
+                    {
+                        "mensaje": "Producto creado correctamente."
+                    }
+                )
+
+            try:
+                detalle = respuesta.json().get(
+                    "detail",
+                    "No se pudo crear el producto."
+                )
+            except ValueError:
+                detalle = "No se pudo crear el producto."
+
+            return render(
+                request,
+                "techgear/crear_producto.html",
+                {
+                    "error": detalle
+                }
+            )
+
+        except requests.exceptions.ConnectionError:
+
+            return render(
+                request,
+                "techgear/crear_producto.html",
+                {
+                    "error": "No se pudo conectar con la API."
+                }
+            )
+
+        except requests.exceptions.Timeout:
+
+            return render(
+                request,
+                "techgear/crear_producto.html",
+                {
+                    "error": "La API tardó demasiado en responder."
+                }
+            )
+
+        except requests.exceptions.RequestException:
+
+            return render(
+                request,
+                "techgear/crear_producto.html",
+                {
+                    "error": "Ocurrió un error al comunicarse con la API."
+                }
+            )
+
+    return render(
+        request,
+        "techgear/crear_producto.html"
+    )
+
+
 def pedidos(request):
+
     try:
         respuesta = requests.get(
             f"{API_URL}/pedidos/",
@@ -79,6 +183,7 @@ def pedidos(request):
         )
 
         if respuesta.status_code == 200:
+
             pedidos = respuesta.json()
 
             return render(
@@ -107,6 +212,7 @@ def pedidos(request):
         )
 
     except requests.exceptions.ConnectionError:
+
         return render(
             request,
             "techgear/pedidos.html",
@@ -117,6 +223,7 @@ def pedidos(request):
         )
 
     except requests.exceptions.Timeout:
+
         return render(
             request,
             "techgear/pedidos.html",
@@ -127,6 +234,7 @@ def pedidos(request):
         )
 
     except requests.exceptions.RequestException:
+
         return render(
             request,
             "techgear/pedidos.html",
@@ -135,7 +243,6 @@ def pedidos(request):
                 "error": "Ocurrió un error al consultar los pedidos."
             }
         )
-
 
 def checkout(request):
 
@@ -154,16 +261,6 @@ def checkout(request):
                 "total": float(request.POST.get("total"))
             }
 
-        except (ValueError, TypeError):
-            return render(
-                request,
-                "techgear/checkout.html",
-                {
-                    "error": "Los datos de cantidad o total no son válidos."
-                }
-            )
-
-        try:
             respuesta = requests.post(
                 f"{API_URL}/pedidos/",
                 json=datos,
@@ -175,7 +272,7 @@ def checkout(request):
                     request,
                     "techgear/checkout.html",
                     {
-                        "mensaje": "Pedido creado correctamente."
+                        "confirmado": True
                     }
                 )
 
@@ -195,119 +292,52 @@ def checkout(request):
                 }
             )
 
-        except requests.exceptions.ConnectionError:
-            return render(
-                request,
-                "techgear/checkout.html",
-                {
-                    "error": "No se pudo conectar con la API. Verifica que el servidor esté encendido."
-                }
-            )
+        except (ValueError, TypeError):
 
-        except requests.exceptions.Timeout:
             return render(
                 request,
                 "techgear/checkout.html",
                 {
-                    "error": "La API tardó demasiado en responder. Intenta nuevamente."
+                    "error": "La cantidad o el total no son válidos."
                 }
             )
 
         except requests.exceptions.RequestException:
+
             return render(
                 request,
                 "techgear/checkout.html",
-                {
-                    "error": "Ocurrió un error al comunicarse con la API."
-                }
-            )
-
-    return render(
-        request,
-        "techgear/checkout.html"
-    )
-def crear_producto(request):
-
-    if request.method == "POST":
-
-        try:
-            datos = {
-                "nombre": request.POST.get("nombre"),
-                "descripcion": request.POST.get("descripcion"),
-                "precio": float(request.POST.get("precio")),
-                "stock": int(request.POST.get("stock")),
-                "categoria": request.POST.get("categoria")
-            }
-
-        except (ValueError, TypeError):
-            return render(
-                request,
-                "techgear/crear_producto.html",
-                {
-                    "error": "El precio o el stock no tienen un formato válido."
-                }
-            )
-
-        try:
-            respuesta = requests.post(
-                f"{API_URL}/productos/",
-                json=datos,
-                timeout=5
-            )
-
-            if respuesta.status_code in (200, 201):
-                return render(
-                    request,
-                    "techgear/crear_producto.html",
-                    {
-                        "mensaje": "Producto creado correctamente."
-                    }
-                )
-
-            try:
-                detalle = respuesta.json().get(
-                    "detail",
-                    "No se pudo crear el producto."
-                )
-            except ValueError:
-                detalle = "No se pudo crear el producto."
-
-            return render(
-                request,
-                "techgear/crear_producto.html",
-                {
-                    "error": detalle
-                }
-            )
-
-        except requests.exceptions.ConnectionError:
-            return render(
-                request,
-                "techgear/crear_producto.html",
                 {
                     "error": "No se pudo conectar con la API."
                 }
             )
 
-        except requests.exceptions.Timeout:
-            return render(
-                request,
-                "techgear/crear_producto.html",
-                {
-                    "error": "La API tardó demasiado en responder."
-                }
+
+    # GET: mostrar producto
+
+    producto_id = request.GET.get("producto_id")
+
+    producto = None
+
+    if producto_id:
+
+        try:
+            respuesta = requests.get(
+                f"{API_URL}/productos/{producto_id}",
+                timeout=5
             )
 
+            if respuesta.status_code == 200:
+                producto = respuesta.json()
+                producto["id"] = producto["_id"]
+
         except requests.exceptions.RequestException:
-            return render(
-                request,
-                "techgear/crear_producto.html",
-                {
-                    "error": "Ocurrió un error al comunicarse con la API."
-                }
-            )
+            pass
 
     return render(
         request,
-        "techgear/crear_producto.html"
+        "techgear/checkout.html",
+        {
+            "producto": producto
+        }
     )
