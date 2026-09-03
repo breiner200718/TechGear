@@ -227,6 +227,86 @@ def checkout(request):
         "techgear/checkout.html"
     )
 def crear_producto(request):
+
+    if request.method == "POST":
+
+        try:
+            datos = {
+                "nombre": request.POST.get("nombre"),
+                "descripcion": request.POST.get("descripcion"),
+                "precio": float(request.POST.get("precio")),
+                "stock": int(request.POST.get("stock")),
+                "categoria": request.POST.get("categoria")
+            }
+
+        except (ValueError, TypeError):
+            return render(
+                request,
+                "techgear/crear_producto.html",
+                {
+                    "error": "El precio o el stock no tienen un formato válido."
+                }
+            )
+
+        try:
+            respuesta = requests.post(
+                f"{API_URL}/productos/",
+                json=datos,
+                timeout=5
+            )
+
+            if respuesta.status_code in (200, 201):
+                return render(
+                    request,
+                    "techgear/crear_producto.html",
+                    {
+                        "mensaje": "Producto creado correctamente."
+                    }
+                )
+
+            try:
+                detalle = respuesta.json().get(
+                    "detail",
+                    "No se pudo crear el producto."
+                )
+            except ValueError:
+                detalle = "No se pudo crear el producto."
+
+            return render(
+                request,
+                "techgear/crear_producto.html",
+                {
+                    "error": detalle
+                }
+            )
+
+        except requests.exceptions.ConnectionError:
+            return render(
+                request,
+                "techgear/crear_producto.html",
+                {
+                    "error": "No se pudo conectar con la API."
+                }
+            )
+
+        except requests.exceptions.Timeout:
+            return render(
+                request,
+                "techgear/crear_producto.html",
+                {
+                    "error": "La API tardó demasiado en responder."
+                }
+            )
+
+        except requests.exceptions.RequestException:
+            return render(
+                request,
+                "techgear/crear_producto.html",
+                {
+                    "error": "Ocurrió un error al comunicarse con la API."
+                }
+            )
+
     return render(
         request,
         "techgear/crear_producto.html"
