@@ -226,3 +226,8 @@ def checkout(request):
         request,
         "techgear/checkout.html"
     )
+def crear_producto(request):
+    return render(
+        request,
+        "techgear/crear_producto.html"
+    )

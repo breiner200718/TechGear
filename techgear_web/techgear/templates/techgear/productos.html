@@ -1,12 +1,17 @@
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>TechGear - Productos</title>
 
     <style>
+
         * {
             margin: 0;
             padding: 0;
@@ -20,6 +25,7 @@
         }
 
         /* NAVBAR */
+
         .navbar {
             background: #111827;
             color: white;
@@ -42,6 +48,7 @@
         }
 
         /* HEADER */
+
         .header {
             text-align: center;
             padding: 50px 20px 30px;
@@ -58,7 +65,27 @@
             font-size: 17px;
         }
 
+        /* BOTON AGREGAR */
+
+        .btn-agregar {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 22px;
+            background: #0284c7;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-agregar:hover {
+            background: #0369a1;
+            transform: translateY(-2px);
+        }
+
         /* ERROR */
+
         .error {
             width: 90%;
             max-width: 700px;
@@ -81,27 +108,25 @@
         }
 
         /* PRODUCT GRID */
+
         .productos-container {
             width: 90%;
             max-width: 1200px;
             margin: 20px auto 60px;
-
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
             gap: 25px;
         }
 
         /* PRODUCT CARD */
+
         .producto {
             background: white;
             border-radius: 15px;
             padding: 25px;
-
             box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
-
             transition: transform 0.25s ease,
                         box-shadow 0.25s ease;
-
             border: 1px solid #e5e7eb;
         }
 
@@ -111,21 +136,20 @@
         }
 
         /* CATEGORY */
+
         .categoria {
             display: inline-block;
             background: #e0f2fe;
             color: #0369a1;
-
             padding: 6px 12px;
             border-radius: 20px;
-
             font-size: 13px;
             font-weight: bold;
-
             margin-bottom: 15px;
         }
 
         /* PRODUCT NAME */
+
         .producto h2 {
             font-size: 22px;
             margin-bottom: 12px;
@@ -133,6 +157,7 @@
         }
 
         /* DESCRIPTION */
+
         .descripcion {
             color: #6b7280;
             line-height: 1.6;
@@ -141,6 +166,7 @@
         }
 
         /* PRICE */
+
         .precio {
             font-size: 25px;
             font-weight: bold;
@@ -149,11 +175,11 @@
         }
 
         /* STOCK */
+
         .stock {
             background: #f3f4f6;
             padding: 10px;
             border-radius: 8px;
-
             font-size: 14px;
             color: #374151;
         }
@@ -164,17 +190,15 @@
         }
 
         /* EMPTY */
+
         .sin-productos {
             width: 90%;
             max-width: 600px;
             margin: 40px auto;
-
             background: white;
             padding: 40px;
-
             text-align: center;
             border-radius: 15px;
-
             box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
         }
 
@@ -188,17 +212,17 @@
         }
 
         /* FOOTER */
+
         footer {
             background: #111827;
             color: #9ca3af;
-
             text-align: center;
             padding: 20px;
-
             font-size: 14px;
         }
 
         /* RESPONSIVE */
+
         @media (max-width: 600px) {
 
             .navbar {
@@ -216,14 +240,19 @@
             .productos-container {
                 width: 92%;
             }
+
         }
+
     </style>
+
 </head>
 
 <body>
 
     <!-- NAVBAR -->
+
     <nav class="navbar">
+
         <div class="logo">
             TechGear
         </div>
@@ -231,20 +260,43 @@
         <div class="nav-title">
             Catálogo de productos
         </div>
+
     </nav>
 
 
     <!-- HEADER -->
-    <header class="header">
-        <h1>Productos TechGear</h1>
 
-        <p>
-            Explora nuestro catálogo de productos tecnológicos
-        </p>
-    </header>
+  <header class="header">
+
+    <h1>Productos TechGear</h1>
+
+    <p>
+        Explora nuestro catálogo de productos tecnológicos
+    </p>
+
+    <h2 style="color: red; margin-top: 20px;">
+        PRUEBA DEL BOTÓN
+    </h2>
+
+    <a href="{% url 'crear_producto' %}"
+       style="
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 25px;
+            background: blue;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+       ">
+        + AGREGAR PRODUCTO
+    </a>
+
+</header>
 
 
     <!-- ERROR -->
+
     {% if error %}
 
         <section class="error">
@@ -259,6 +311,7 @@
 
 
     <!-- PRODUCTOS -->
+
     {% elif productos %}
 
         <main class="productos-container">
@@ -284,8 +337,13 @@
                     </p>
 
                     <div class="stock">
+
                         Stock disponible:
-                        <span>{{ producto.stock }}</span>
+
+                        <span>
+                            {{ producto.stock }}
+                        </span>
+
                     </div>
 
                 </article>
@@ -296,6 +354,7 @@
 
 
     <!-- SIN PRODUCTOS -->
+
     {% else %}
 
         <section class="sin-productos">
@@ -314,9 +373,13 @@
 
 
     <!-- FOOTER -->
+
     <footer>
+
         © 2026 TechGear — Catálogo de productos
+
     </footer>
 
 </body>
+
 </html>
